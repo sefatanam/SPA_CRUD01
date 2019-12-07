@@ -1,0 +1,70 @@
+﻿@model SPA_Practice.Models.StudentSubject
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="row col-lg-6 col-md-offset-3">
+            <div class="form-group">
+                @Html.Label("StudentId", "Student Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-8">
+                    @Html.DropDownListFor(c => c.StudentId, Model.StudentLookUp, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            @* Take a subject table *@
+            <div class="col-md-6">
+                <h3>Takeable Subjects</h3>
+                <table class="table table-bordered table-striped table-responsive table-hover">
+                    <thead>
+                        <tr style="background-color: teal; color: white; font-weight: bold" align="center">
+                            <td>Serial No</td>
+                            <td>Subject Name</td>
+                            <td>Optional</td>
+                            <td>Option</td>
+                        </tr>
+                    </thead>
+                    <tbody id="takeSubjectTable"></tbody>
+                </table>
+            </div>
+
+            @* Added Suject table *@
+
+            <div class="form-group">
+                <div class="col-md-6">
+                    <h3>Added Subjects</h3>
+                    <table class="table table-bordered table-striped table-responsive table-hover">
+                        <thead>
+                            <tr style="background-color: teal; color: white; font-weight: bold" align="center">
+                                <td>Serial No</td>
+                                <td>Subject Name</td>
+                                <td>Optional</td>
+                                <td>Option</td>
+                            </tr>
+                        </thead>
+                        <tbody id="addedSubjectTable"></tbody>
+                    </table>
+
+                    <div class="col-md-offset-8">
+                        <input type="submit" value="Save" class="btn btn-info" />
+                        <input type="button" value="Cancel" class="btn btn-info" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/HomeScript/GetAllTakeableSubjects.js"></script>
+
+}
