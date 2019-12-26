@@ -6,6 +6,7 @@ class Subject {
     IsOptional = "";
     Serial = "";
 }
+
 var takeableSubjectList = [];
 var addedSubjectList = [];
 
@@ -13,16 +14,21 @@ $(document).ready(function () {
     getAllSubject();
 });
 
-function emptyCollection() {
+function emptyTableCollection() {
     $("#addedSubjectTable").empty();
     $("#takeSubjectTable").empty();
 }
 
 $("#StudentId").change(function () {
-    const id = $("#StudentId").val();
-    $("#addedSubjectTable").empty();
-    $("#takeSubjectTable").empty();
+    emptyTableCollection();
+    let id = $("#StudentId").val();
+
     getSelectedStudentSubject(id);
+
+    console.log('Takeable subjects');
+    console.log(takeableSubjectList);
+    console.log("Addedable Subjects");
+    console.log(addedSubjectList);
 });
 
 function getSelectedStudentSubject(id) {
@@ -30,13 +36,15 @@ function getSelectedStudentSubject(id) {
     var url = "../../Home/GetSelectedStudentSubjects";
 
     $.get(url, params, function (data) {
-        if (data.length < 0 || data.count < 0) {
-            getAllSubject();
-        }
+        //if (data.length < 0 || data.count === 0) {
+        //    getAllSubject();
+        //}
+
         data.forEach(c => {
             for (let i = 0; i < takeableSubjectList.length; i++) {
                 if (takeableSubjectList[i].Id === c.SubjectId) {
                     addedSubjectList.push(takeableSubjectList[i]);
+
                     takeableSubjectList = jQuery.grep(takeableSubjectList,
                         function (value) {
                             return value !== takeableSubjectList[i];
@@ -79,6 +87,7 @@ function getAllSubject() {
 
 function makeTableEffect() {
     $("#takeSubjectTable").empty();
+    console.log(takeableSubjectList.length);
 
     if (takeableSubjectList.length > 0) {
         for (let i = 0; i < takeableSubjectList.length; i++) {
@@ -107,11 +116,11 @@ function addedSubjectArrowCell(sl) {
 }
 
 function addedTableEffect() {
+    $("#addedSubjectTable").empty();
+
     if (addedSubjectList.length > 0) {
-        if (addedSubjectList.length > 0) {
-            for (let i = 0; i < addedSubjectList.length; i++) {
-                addedTableRowEffect(addedSubjectList[i].Serial, addedSubjectList[i].Name, addedSubjectList[i].IsOptional, addedSubjectList[i].Id);
-            }
+        for (let i = 0; i < addedSubjectList.length; i++) {
+            addedTableRowEffect(addedSubjectList[i].Serial, addedSubjectList[i].Name, addedSubjectList[i].IsOptional, addedSubjectList[i].Id);
         }
     }
 }
@@ -122,7 +131,7 @@ function GetAddedSub(id) {
             addedSubjectList.push(takeableSubjectList[i]);
             takeableSubjectList = jQuery.grep(takeableSubjectList,
                 function (value) {
-                    return value != takeableSubjectList[i];
+                    return value !== takeableSubjectList[i];
                 });
         }
     }
@@ -167,18 +176,9 @@ function checkBoxTrueOrFalse(subject, sl) {
 
 function deleteFromAddedCell(sl) {
     GetRemovedSub(sl);
-
-    $("#takeSubjectTable").empty();
-    $("#addedSubjectTable").empty();
-
+    emptyTableCollection();
     makeTableEffect();
     addedTableEffect();
-
-    if (takeableSubjectList.length > 0) {
-        for (let i = 0; i < takeableSubjectList.length; i++) {
-            takeableSubjectList(takeableSubjectList[i].Serial, takeableSubjectList[i].Name, takeableSubjectList[i].IsOptional, addedSubjectList[i].Id);
-        }
-    }
 }
 
 function GetRemovedSub(id) {
@@ -188,7 +188,7 @@ function GetRemovedSub(id) {
 
             addedSubjectList = jQuery.grep(addedSubjectList,
                 function (value) {
-                    return value != addedSubjectList[i];
+                    return value !== addedSubjectList[i];
                 });
         }
     }
