@@ -1,7 +1,4 @@
-﻿$("#StudentId").change(function() {
-    $("#takeSubjectTable").empty();
-    makeTableEffect();
-});
+﻿//# Match Start from Here #//
 
 class Subject {
     Id = "";
@@ -9,14 +6,51 @@ class Subject {
     IsOptional = "";
     Serial = "";
 }
-
 var takeableSubjectList = [];
-
 var addedSubjectList = [];
 
-$(document).ready(function() {
+$(document).ready(function () {
     getAllSubject();
 });
+
+function emptyCollection() {
+    $("#addedSubjectTable").empty();
+    $("#takeSubjectTable").empty();
+}
+
+$("#StudentId").change(function () {
+    const id = $("#StudentId").val();
+    $("#addedSubjectTable").empty();
+    $("#takeSubjectTable").empty();
+    getSelectedStudentSubject(id);
+});
+
+function getSelectedStudentSubject(id) {
+    var params = { id: id };
+    var url = "../../Home/GetSelectedStudentSubjects";
+
+    $.get(url, params, function (data) {
+        if (data.length < 0 || data.count < 0) {
+            getAllSubject();
+        }
+        data.forEach(c => {
+            for (let i = 0; i < takeableSubjectList.length; i++) {
+                if (takeableSubjectList[i].Id === c.SubjectId) {
+                    addedSubjectList.push(takeableSubjectList[i]);
+                    takeableSubjectList = jQuery.grep(takeableSubjectList,
+                        function (value) {
+                            return value !== takeableSubjectList[i];
+                        });
+                }
+            }
+        });
+
+        makeTableEffect();
+        addedTableEffect();
+    }).fail(function (err) {
+        alert(err);
+    });
+}
 
 function getAllSubject() {
     $.ajax({
@@ -24,11 +58,11 @@ function getAllSubject() {
         type: "GET",
         data: JSON.stringify(),
         contentType: "application/json;charset=utf-8",
-        success: function(data) {
+        success: function (data) {
             if (data !== false && data !== undefined && data.length > 0) {
                 sl = 1;
-                $.each(data, function(k, v) {
-                    var sub = new Subject();
+                $.each(data, function (k, v) {
+                    let sub = new Subject();
                     sub.Id = v.Id;
                     sub.Name = v.Name;
                     sub.IsOptional = v.IsOptional;
@@ -37,7 +71,7 @@ function getAllSubject() {
                     sl++;
                 });
             }
-        }, error: function(err) {
+        }, error: function (err) {
             alert(err);
         }
     });
@@ -87,7 +121,7 @@ function GetAddedSub(id) {
         if (takeableSubjectList[i].Id === id) {
             addedSubjectList.push(takeableSubjectList[i]);
             takeableSubjectList = jQuery.grep(takeableSubjectList,
-                function(value) {
+                function (value) {
                     return value != takeableSubjectList[i];
                 });
         }
@@ -113,11 +147,7 @@ function addedTableRowEffect(serial, subjectName, subjectIsOptional, id) {
     } else {
         $("#addedTrueOrFalse_" + serial).prop("checked", false);
     }
-
 }
-
-
-
 
 function checkAddedTrueOrFalse(subject, sl) {
     if (subject === true) {
@@ -155,8 +185,9 @@ function GetRemovedSub(id) {
     for (let i = 0; i < addedSubjectList.length; i++) {
         if (addedSubjectList[i].Id === id) {
             takeableSubjectList.push(addedSubjectList[i]);
+
             addedSubjectList = jQuery.grep(addedSubjectList,
-                function(value) {
+                function (value) {
                     return value != addedSubjectList[i];
                 });
         }
